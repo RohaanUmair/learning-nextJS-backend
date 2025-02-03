@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
 
-// Define types for user
 interface User {
   userId: number;
   username: string;
@@ -10,18 +9,13 @@ interface User {
 export default function Home() {
   const [users, setUsers] = useState<User[]>([]);
   const [username, setUsername] = useState('');
-  
-  // Fetch users from backend
+
   useEffect(() => {
-    async function fetchUsers() {
-      const res = await fetch('/api/users');
-      const data = await res.json();
-      setUsers(data.users);
-    }
-    fetchUsers();
+    fetch('/api/users')
+      .then((res) => res.json())
+      .then((data) => setUsers(data.users))
   }, []);
 
-  // Add a new user
   async function addUser(e: React.FormEvent) {
     e.preventDefault();
     if (!username) return alert('Please enter a username.');
@@ -33,9 +27,9 @@ export default function Home() {
     });
 
     const newUser = await res.json();
-    setUsers([...users, newUser.user]); // Update state with new user
+    setUsers([...users, newUser.user]);
     setUsername('');
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-6">
