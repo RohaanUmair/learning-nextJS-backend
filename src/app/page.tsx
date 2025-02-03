@@ -1,4 +1,5 @@
 'use client';
+import axios from 'axios';
 import { useState, useEffect } from 'react';
 
 interface User {
@@ -11,24 +12,32 @@ export default function Home() {
   const [username, setUsername] = useState('');
 
   useEffect(() => {
-    fetch('/api/users')
-      .then((res) => res.json())
-      .then((data) => setUsers(data.users))
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get('/api/users');
+        setUsers(response.data.users);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    }
+
+    fetchUsers();
   }, []);
 
-  async function addUser(e: React.FormEvent) {
+  const addUser = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!username) return alert('Please enter a username.');
 
-    const res = await fetch('/api/users', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username }),
-    });
+    try {
+      const response = await axios.post('/api/users', { username });
 
-    const newUser = await res.json();
-    setUsers([...users, newUser.user]);
-    setUsername('');
+      setUsers([...users, response.data.user]);
+
+      setUsername('');
+    } catch (error) {
+      console.error('Error adding user:', error);
+    }
   };
 
   return (
