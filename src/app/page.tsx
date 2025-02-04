@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 
 interface User {
-  userId: number;
   username: string;
 }
 
@@ -27,7 +26,7 @@ export default function Home() {
   const addUser = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!username) return alert('Please enter a username.');
+    if (!username.trim()) return alert('Please enter a username.');
 
     try {
       const response = await axios.post('/api/users', { username });
@@ -62,10 +61,9 @@ export default function Home() {
         {users.length === 0 ? (
           <p className="text-gray-400">No users yet...</p>
         ) : (
-          users.map((user) => (
-            <div key={user.userId} className="bg-gray-700 p-2 rounded mb-2">
+          users.map((user, i) => (
+            <div key={i} className="bg-gray-700 p-2 rounded mb-2">
               <p className="font-semibold">{user.username}</p>
-              <p className="text-sm text-gray-300">User ID: {user.userId}</p>
             </div>
           ))
         )}
